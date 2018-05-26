@@ -1,0 +1,385 @@
+CSE303 - Fall 2015
+Assignment #1: C Refresher
+
+Purpose and General Guidelines:
+
+  There are two purposes to this assignment.  The first is to provide an
+  opportunity for students to brush up on their C programming.  The second is
+  to gain an appreciation for the diversity of tools and applications that
+  are part of what we commonly refer to as an "operating system".
+
+  This is an individual assignment.  Students should not work in teams.
+  Every bit of code that a student turns in as part of this assignment should
+  be their own work.  You may consult question-and-answer websites such as
+  StackOverflow to see how other people have tried, failed, and then received
+  assistance in their attempts at these and similar problems.  However, you
+  may not use other people's code.  Be conservative in your judgment.
+  Anything on GitHub is obviously off limits.  Anything written by your
+  classmates is off limits.  Pasting anything from a website into your
+  solution file is not appropriate.  By this point in your academic career,
+  you should know how to be ethical.
+
+  Your solutions should be in C, not C++.  The transition from C++ to C is
+  cumbersome, but not difficult.  Start early, and take advantage of office
+  hours if you are having trouble.  If you cannot solve these puzzles on your
+  own, you won't be able to earn a good grade on any programming assignment
+  in this class.
+
+  For the most part, this assignment entails the creation of limited versions
+  of classic Unix utilities.  Thus you should be able to get a sense for how
+  well your solutions work by comparing your output to the output of the same
+  tools in Unix.
+
+  Each part is weighted equally, but not all parts are equally difficult.
+  You should read the entire assignment before starting.
+
+Getting the Files
+
+  The source code that you will be editing can be found in the /proj/spear0
+  folder on the sunlab machines.  From your sunlab account, you should make a
+  protected folder where you will work on this project, then copy the source
+  code and unpack it.  You should know how to do this by now, but just in
+  case you have forgotten, here is a sequence of commands that should work,
+  once you are logged into the sunlab:
+  
+    cd ~/
+    mkdir cse303
+    chmod 700 cse303
+    cd cse303
+    tar -xzvf /proj/spear0/cse303_p1.tgz
+
+  This will create a subfolder with the project 1 source code in it.  The
+  assignment requires you to edit the files in the folder to complete eleven
+  different tasks.
+
+Preparing Your Build Environment
+
+  In this class, we will be using a recent GCC compiler.  You must use GCC
+  6.2 for all code you turn in.  You can switch compilers for a single login
+  session by typing:
+
+    . /proj/spear0/tools.sh
+
+  Note: the '.' is necessary.
+  
+Task #0: Tell us who you are
+
+  You should edit the 'student.c' file to provide your name and email.  Until
+  you do this, none of your programs will execute.
+  
+Task #1: Implement a minimal 'cat' utility called 'mycat'.
+
+  You should begin by reading the man page for cat, by typing 'man cat'.  You
+  will notice that the description is quite brief:
+
+    cat - concatenate files and print on the standard output
+
+  Our version of cat will only deal with at most one file.  When invoked with
+  zero parameters, your program should treat STDIN as its input (that is, it
+  should read from the keyboard).  Note that when testing, you can use
+  "ctrl-d" to enter an end-of-file (EOF) marker.
+
+  Advice:
+
+    You probably want to use the printf() and fgets() functions.
+
+    You should think a bit about how to use file descriptors, so that the use
+    of fgets() instead of scanf allows you to only write one function that
+    actually performs reads.  If you have separate code for reading from a
+    file and reading from STDIN, you're doing it wrong, and won't receive
+    full points.
+
+    You can safely assume that the lines of the files we provide will be no
+    longer than 1024 characters.  This assumption should help you to write
+    secure code (e.g., code that does not use the unqualified '%s'
+    specifier).
+
+    You should not need to call malloc() or free() to solve this task.
+
+    You should use perror() and exit() to print an error message and exit
+    when the provided file name is not valid.
+
+Task #2: Implement a minimal 'wc' utility called 'mywc'.
+
+  Start by reading the man page for 'wc'.  'wc' counts the words, characters,
+  and lines in a program.
+
+  Your program will take one parameter: the name of the file whose words will
+  be counted.  You may assume that the file contains text.  If no parameter
+  is given, your program should gracefully exit.
+
+  In terms of what constitutes a word, you can assume that a word consists of
+  contiguous characters in the range [a-z][A-Z][0-9].  One or more spaces (' '),
+  tabs ('\t'), or newlines ('\n') delineates words.  You should ignore all
+  other characters (such as punctuation).  That is, the string "this.is.fun"
+  should count as one word, and " . " should count as zero words.
+
+  Advice:
+
+    You should only need getc() and printf() to complete this task.  You
+    should not need to call malloc() or free().
+
+    You should output the words, characters, and lines in the file, as well
+    as the file name, in the same order as Unix wc, but with no leading
+    spaces, and only one space between values.  Note that due to our
+    definition of a 'word', your word count may not be the same as Unix wc.
+
+    Be sure to think about ASCII character codes.  There should not be
+    especially complex if statements in your implementation.
+
+Task #3: Implement a minimal 'head' utility called 'myhead'.
+
+  Again, read the man page for 'head'.  You should, by default, display the
+  first 10 lines, but if the user specifies a '-n' parameter, then you should
+  display the provided number of lines.  If the file is too short, you should
+  display the whole file.  Your program should take at most one parameter:
+  -n.  It should read from STDIN, not from a file.
+
+  Advice:
+
+    You may safely assume that individual lines in the input we provide will
+    be no longer than 1024 characters.  That being the case, you should not
+    need to call malloc() or free().
+
+    The starter code for 'myhead' makes use of getopt().  You should read the
+    man page for getopt.  It will be useful later.
+
+    To simplify testing your program, use I/O redirection (specifically '<').
+
+Task #4: Implement a minimal 'tail' utility called 'mytail'.
+
+  You should start by reading the man page for 'tail'.  This will be much
+  like 'myhead', except that you should now support up to two parameters.  A
+  -n parameter is optional, and will result in your program listing the last
+  'n' lines, instead of the last 10.  A filename parameter, *after* the
+  optional -n, is also optional, and indicates the file to use.  If no
+  filename is provided, then your program should read from STDIN.
+
+  Advice:
+
+    You should use a circular buffer to store the strings that you might
+    output.  You should *not* save the entire file into main memory.
+
+    You ought to think about what it means to have a pointer to a position
+    inside of an array.  It is possible to only call malloc() once for this
+    task.  If you're familiar with C99's ability to have variable-sized
+    arrays on the stack, be warned that we might give a very large -n value,
+    in which case your could exhaust the 1M stack limit... so a single
+    allocation is necessary.
+
+    Don't forget to free any memory you allocate.
+  
+Task #5: Re-acquaint yourself with Unix signals by writing 'myalive'
+
+  This task does not correspond directly to a Unix utility.  Instead, it
+  helps you to get re-acquainted with Unix signals.
+
+  Your program should wait ten seconds, and then exit.  It should wait by
+  using the 'alarm' system call.  When ctrl-c is pressed, your program should
+  not exit.  Instead, it should output "no".  When 10 seconds expire, your
+  program should output the time it waited before exiting.
+
+  If the Unix 'kill' command is used to send your program a SIGALRM, your
+  program should output the number of seconds it waited, and should exit.  In
+  this way, you may run for less than 10 seconds.
+
+  Advice:
+
+    You will need to use the signal() function, and gettimeofday().
+
+    You should not use 'sleep()' to wait 10 seconds.  Use alarm(), coupled
+    with a loop.
+
+    You should also not call gettimeofday() in a spin loop.  It should only
+    be called twice.
+
+    Remember that printf() is not async-signal safe.  You should not call
+    printf() from a signal handler.
+
+    It is easiest to have your SIGALRM handler set a flag to interrupt your
+    loop.  But since the signal is asynchronous, this can be tricky.  If your
+    code works with -O0 optimizations, but not otherwise, then the compiler
+    is probably caching the value of the flag in a register.  There is a way
+    to prevent the C compiler from caching a variable in a register.  You
+    should have encountered it in CSE 202 or ECE 201.
+
+    If your program never halts, you should use 'ctrl-z' to suspend it, then
+    use 'ps' to find its process id, and then use 'kill -9' to terminate it.
+
+Task #6: Implement a minimal 'sort' utility called 'mysort'
+
+  The Unix sort utility is very powerful.  It can handle huge files, and it
+  supports a dizzying array of parameters.  We will only achieve a small
+  fraction of its power.  In particular, we will only support the -r and -u
+  parameters (though a combination thereof is also possible), and we will
+  only work with a single input file.  Your 'mysort' program does not need to
+  be able to sort input from STDIN.  It should also do a *case sensitive*
+  sort.  Unix sort is not case sensitive unless the LC_ALL environment
+  variable is set to C.
+
+  'mysort' should take at least one, and up to three parameters: The -r flag
+  sorts in reverse order.  The -u flag indicates that the sort should only
+  output unique values.  The final parameter will be the name of the file to
+  sort.
+  
+  Advice:
+
+    C includes a very well-written 'qsort' function.  You must use it.  *Do
+    not implement your own sort function*.
+  
+    The Unix sort program is very carefully written.  You may be a bit less
+    careful.  For example, you may assume that the input will be no more than
+    one million lines, and you may assume that each line of the input file is
+    no more than 1024 characters.  All input will be text files.
+
+    You will need to use malloc() and free() carefully.  I will use
+    'valgrind' to make sure that your program frees everything that it
+    allocates.
+
+    You should probably use strcmp() to compare strings, but you will
+    probably need to do so from a comparison function of your own creation.
+
+    Remember that C is not strongly typed.  You should make sure your code
+    does not generate warnings related to pointer casting.
+
+Task #7: Implement a simple 'grep' called 'mygrep'
+
+  The Unix 'grep' command performs searches in files.  Our version of grep
+  will take two parameters: a single word that will be used as the search
+  string, and the name of a file.  Your 'mygrep' program will then output
+  every line of the input file that contains the search string.  Note that
+  the search should not worry itself with whether the search string is a
+  unique word or part of another word.  For example, a search for "the"
+  should return a line containing "whether".
+
+  Advice:
+
+    You may assume that lines of text in the input file are no more than 1024
+    characters.  That being the case, you should not need to call malloc() or
+    free().
+
+    You should make use of the strstr() function.
+  
+Task #8: Perform search-and-replace using 'mysed'
+
+  Whereas it's possible to understand the behavior of 'grep' by reading its
+  man page, Unix 'sed' is so complicated that you'd probably want a whole
+  book.  Sed can do far more than you might imagine.  But we'll focus on a
+  simple task.  The following invocation:
+    sed 's/happy/sad/g' file
+  indicates that sed should read file, globally substitute all instances of
+  'happy' with instances of 'sad', and print the result to STDOUT.  Your
+  'mysed' tool should support this, and only this, behavior.  It should
+  require its first parameter to be of the form 's/zzz/yyy/g', where the zzz
+  and yyy are strings that do not contain the '/' character.
+
+  Similar to the case with 'mygrep', instances of the search string that
+  appear multiple times in a line, or that appear as substrings of an
+  existing word, should be replaced.
+
+  Advice:
+
+    You will probably want to use the strncmp(), strlen(), strcat(),
+    strncpy(), and strcpy() functions.
+
+    It might be worth your while to use strtok() as well, but that's up to
+    you.
+    
+    While you may assume that input lines are no more than 1024 characters,
+    output lines may not adhere to this constraint.  Thus you will need to
+    allocate and free memory carefully.
+
+    Note that the find string is not allowed to be empty, but the replace
+    string may be empty.
+
+Task #9: Read the machine's host name using 'myhostname'
+
+  This task is among the simplest: use the gethostname() command to return
+  the host name of the machine on which the script is run.  Be sure to read
+  the starter code, as we expect you to output the host name in a few ways.
+
+  Advice:
+
+    Be sure to read the man page for gethostname so that you know the maximum
+    size of a host name.  You should not need malloc() or free().
+
+Task #10: Manipulate a linked list with 'mylist'
+
+  There are two goals for this final task.  The first is to remind yourself
+  of how to allocate and free memory when constructing a data structure in
+  C.  The second is to learn a bit about using valgrind.
+
+  In this task, you should create a global variable called 'head', which
+  points to a linked list of integers.  Your program should read commands
+  from STDIN, and act according to those commands.  Commands will consist of
+  a character, a space, an integer, and a newline.  The character will be one
+  of 'i', 'r', 'p', or 'x', corresponding to requests to insert a value,
+  remove a value, print the list, or exit the program.
+
+  The list should be sorted, but should allow duplicates.  Inserts should
+  preserve the order of the list.  Removes should extract at most one
+  element.  Print commands should print the entire list, and should ignore
+  their parameter.
+
+  Your output should exactly match the output I provide.  For example, the
+  command sequence:
+    i 7
+    i 3
+    i 9
+    r 2
+    i 2
+    r 3
+    p 0
+  should produce the output
+    2-->7-->9
+
+  You should use the valgrind tool to ensure that your code does not have
+  memory leaks.  Here is an example invocation:
+    valgrind --tool=memcheck --leak-check=yes --show-reachable=yes .mylist
+  More documentation on valgrind is available at:
+    http://valgrind.org/docs/manual/quick-start.html
+
+  Advice:
+
+    C does not have destructors, and your list head is a global pointer.  You
+    should expect valgrind to report un-freed memory if the input does not
+    clean up properly.  For example, the script:
+      i 7
+      x 0
+    should result in output such as
+      8 bytes in 1 blocks are still reachable in loss record 1 of 1
+
+    You might want to intentionally *not* free memory at first, just to see
+    how valgrind responds.
+
+    You should create a script to simplify testing your program.  You can use
+    I/O redirection to feed your script to the program:
+      ./mylist < myscript
+    (remember: '<' redirects STDIN, '>' redirects STDOUT)
+
+Turn-In Instructions
+
+  To turn in your solutions, type 'make turnin'.
+
+  You may turn in your solutions as many times as you like.  The last turn-in
+  received before grading begins is the only turn-in that will be graded.
+
+  Any task whose code does not compile will receive 0 points.
+    
+A Note About Grading
+
+  All code is particular about formatting rules.  Operating System code is
+  especially picky.  If your solution to any task produces extraneous output,
+  you will receive a zero for that task.  We will be running your code, to
+  ensure that it produces the right output, and reading your code, to make
+  sure you are using the right approach.  You should comment anything that
+  doesn't work, to let us know what is and is not correct, or else we will
+  not give any partial credit.  You should write good code.  It should be
+  formatted neatly.  Names should be descriptive.  You shouldn't use brute
+  force when there's an easier way to solve a problem.
+
+  Put another way, you are at a point in your education where getting code to
+  work is not enough to earn full credit.  Write code as if someone else will
+  need to read it, edit it, and maintain it.  If you don't, we reserve the
+  right to give less than full credit, even if your code has a correct
+  response to the inputs we provide.
